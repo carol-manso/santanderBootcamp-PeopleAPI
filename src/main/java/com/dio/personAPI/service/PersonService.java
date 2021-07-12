@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class PersonService {
     private PersonRepository personRepository;
-    private PersonMapper personMapper= PersonMapper.INSTANCE;
+    private PersonMapper personMapper = PersonMapper.INSTANCE;
     //criamos essa constante instance para retornar um getMapper para ele retornar uma instancia.
 
 
@@ -26,7 +26,7 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public MessageResponseDTO createPerson(PersonDTO personDTO){
+    public MessageResponseDTO createPerson(PersonDTO personDTO) {
         Person personToSave = personMapper.toModel(personDTO);
 
         Person savedPerson = personRepository.save(personToSave);
@@ -37,16 +37,31 @@ public class PersonService {
                 .message("Created person with ID = " + savedPerson.getId())
                 .build();
     }
+
     public List<PersonDTO> listAll() {
         List<Person> people = personRepository.findAll();
         return people.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
     }
-    public PersonDTO findById (Long id) throws PersonNotFoundException {
-       Person person = personRepository.findById(id)
-               .orElseThrow(() -> new PersonNotFoundException(id));
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = verifyIfExists(id);
+
+
         return personMapper.toDTO(person);
     }
 
+
+    public void delete(Long id) throws PersonNotFoundException {
+        //verificar se esse id existe no sistema
+        Person person = verifyIfExists(id);
+        personRepository.deleteById(id);
+
+    }
+
+    private Person verifyIfExists(Long id) throws PersonNotFoundException {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+    }
 }
