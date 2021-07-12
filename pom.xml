@@ -14,7 +14,7 @@
 	<name>personAPI</name>
 	<description>Person API project</description>
 	<properties>
-		<java.version>16.0.1</java.version>
+		<java.version>16</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
